@@ -11,6 +11,14 @@ app.set("view engine", "ejs");
 const path = require("path");
 app.set("views", path.join(__dirname, "/views"));
 
+// MIDDLEWARE
+// Allow the user for parsing
+app.use(express.urlencoded({ extended: true }));
+
+// Allow the user of method override
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
+
 // Mongoose / MongoDB
 const mongoose = require("mongoose");
 
@@ -29,16 +37,58 @@ mongoose
 // Routing CRUD
 
 // GET: Home Page
-app.get("/makecampground", async (req, res) => {
-  const camp = new Campground({ title: "ben", price: "3.99" });
-  await camp.save();
-
-  res.render("home", { camp });
-
-  console.log(camp);
+app.get("/", (req, res) => {
+  res.render("home");
 });
 
+////////////// DISPLAYS CAMPGROUNDS //////////////
+
+// GET: Display Campgrounds
+app.get("/campgrounds", async (req, res) => {
+  const campgrounds = await Campground.find({});
+  res.render("campgrounds", { campgrounds });
+});
+
+////////////// CREATE CAMPGROUND AND ADD TO DATABASE //////////////
+
+// GET: Create Campground
+app.get("/campgrounds/create", (req, res) => {
+  res.render("create");
+});
+
+// POST: Created Campground Added To DB
+app.post("/campgrounds", async (req, res) => {
+  const newCampground = new Campground(req.body);
+  await newCampground.save();
+  res.redirect("/campgrounds");
+});
+
+////////////// UPDATE EXISTING CAMPGROUND //////////////
+
+app.get("/campgrounds/:id/edit", async (req, res) => {
+  const { id } = req.params;
+  const campgroundType = await Campground.findById(id);
+  res.render("update", { campgroundType });
+});
+
+app.put("/campgrounds/:id", async (req, res) => {
+  const { id } = req.params;
+  const campgroundEdit = await Campground.findByIdAndUpdate(id, req.body);
+  res.redirect(`${campgroundEdit._id}`);
+});
+
+////////////// DISPLAY CAMPGROUNDS BY ID //////////////
+
+// GET: Display Campgrounds by ID
+app.get("/campgrounds/:id", async (req, res) => {
+  const { id } = req.params;
+  const campgroundType = await Campground.findById(id);
+  res.render("campground", { campgroundType });
+});
+
+////////////// START EXPRESS SERVER //////////////
+
 // Starting express
-app.listen(3000, (req, res) => {
+app.listen(3030, (req, res) => {
   console.log("CONNECTING TO SERVER");
 });
