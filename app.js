@@ -1,4 +1,4 @@
-// Requiring
+////////////// Requiring //////////////
 
 // Express
 const express = require("express");
@@ -11,13 +11,21 @@ app.set("view engine", "ejs");
 const path = require("path");
 app.set("views", path.join(__dirname, "/views"));
 
-// MIDDLEWARE
-// Allow the user for parsing
+////////////// MIDDLEWARE //////////////
+// Allow the use for parsing
 app.use(express.urlencoded({ extended: true }));
 
-// Allow the user of method override
+// Allow the use of method override
 const methodOverride = require("method-override");
-app.use(methodOverride("_method"));
+app.use(methodOverride("_method")); // Tells all routes to use the middleware
+
+// Morgan Middleware (logs information about the incoming request)
+const morgan = require("morgan");
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms")
+);
+
+////////////// DATABASE IMPLEMENTATION //////////////
 
 // Mongoose / MongoDB
 const mongoose = require("mongoose");
@@ -34,7 +42,21 @@ mongoose
     console.log("AN ERROR HAS OCCURRED");
   });
 
-// Routing CRUD
+////////////// SECRET PAGE //////////////
+const secretPage = (req, res, next) => {
+  const { password } = req.query;
+  if (password === "431212") {
+    next();
+  } else {
+    res.send("YOU DON'T HAVE ACCESS TO THIS PAGE");
+  }
+};
+
+app.get("/secret", secretPage, (req, res) => {
+  res.send("HELLO AND WELCOME TO THIS SECRET PAGE");
+});
+
+////////////// Routing CRUD //////////////
 
 // GET: Home Page
 app.get("/", (req, res) => {
@@ -91,6 +113,11 @@ app.delete("/campgrounds/:id", async (req, res) => {
   const { id } = req.params;
   await Campground.findByIdAndDelete(id);
   res.redirect("/campgrounds");
+});
+
+////////////// 404 ERROR PAGE //////////////
+app.use((req, res) => {
+  res.status(404).send("ERROR 404, PAGE CAN'T BE FOUND");
 });
 
 ////////////// START EXPRESS SERVER //////////////
