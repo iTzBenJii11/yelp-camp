@@ -86,6 +86,13 @@ app.get("/campgrounds/:id", async (req, res) => {
   res.render("campground", { campgroundType });
 });
 
+////////////// DELETE CAMPGROUND BY ID //////////////
+app.delete("/campgrounds/:id", async (req, res) => {
+  const { id } = req.params;
+  await Campground.findByIdAndDelete(id);
+  res.redirect("/campgrounds");
+});
+
 ////////////// START EXPRESS SERVER //////////////
 
 // Starting express

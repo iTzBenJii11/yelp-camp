@@ -11,5 +11,20 @@
       <li>Title: <%= campgroundType.title %></li>
       <li>Location: <%= campgroundType.location %></li>
     </ul>
+
+    <button>
+      <a href="/campgrounds/<%= campgroundType._id %>/EDIT">EDIT CAMPGROUND</a>
+    </button>
+
+    <form
+      action="/campgrounds/<%= campgroundType._id %>?_method=DELETE"
+      method="POST"
+    >
+      <button>DELETE CAMPGROUND</button>
+    </form>
+
+    <button>
+      <a href="/campgrounds">GO BACK</a>
+    </button>
   </body>
 </html>

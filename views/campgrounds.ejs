@@ -10,6 +10,10 @@
     <h1><%= campground.title %></h1>
     <ul>
       <li><%= campground.location %></li>
+      <li>ID: <%= campground._id %></li>
+      <button>
+        <a href="/campgrounds/<%= campground._id %>">AMEND CAMPGROUND</a>
+      </button>
     </ul>
     <% } %>
   </body>
