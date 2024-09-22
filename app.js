@@ -72,7 +72,7 @@ app.get("/", (req, res) => {
 // GET: Display Campgrounds
 app.get("/campgrounds", async (req, res) => {
   const campgrounds = await Campground.find({});
-  res.render("campgrounds", { campgrounds });
+  res.render("index", { campgrounds });
 });
 
 ////////////// CREATE CAMPGROUND AND ADD TO DATABASE //////////////
@@ -86,7 +86,7 @@ app.get("/campgrounds/create", (req, res) => {
 app.post("/campgrounds", async (req, res) => {
   const newCampground = new Campground(req.body);
   await newCampground.save();
-  res.redirect("/campgrounds");
+  res.redirect(`/campgrounds/${newCampground._id}`);
 });
 
 ////////////// UPDATE EXISTING CAMPGROUND //////////////
@@ -109,7 +109,7 @@ app.put("/campgrounds/:id", async (req, res) => {
 app.get("/campgrounds/:id", async (req, res) => {
   const { id } = req.params;
   const campgroundType = await Campground.findById(id);
-  res.render("campground", { campgroundType });
+  res.render("view", { campgroundType });
 });
 
 ////////////// DELETE CAMPGROUND BY ID //////////////
