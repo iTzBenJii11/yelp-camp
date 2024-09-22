@@ -11,6 +11,10 @@ app.set("view engine", "ejs");
 const path = require("path");
 app.set("views", path.join(__dirname, "/views"));
 
+// EJS-MATE
+const ejsEngine = require("ejs-mate");
+app.engine("ejs", ejsEngine);
+
 ////////////// MIDDLEWARE //////////////
 // Allow the use for parsing
 app.use(express.urlencoded({ extended: true }));

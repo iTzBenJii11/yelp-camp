@@ -1,20 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campgrounds</title>
-  </head>
-  <body>
-    <% for (let campground of campgrounds) { %>
-    <h1><%= campground.title %></h1>
-    <ul>
-      <li><%= campground.location %></li>
-      <li>ID: <%= campground._id %></li>
-      <button>
-        <a href="/campgrounds/<%= campground._id %>">AMEND CAMPGROUND</a>
-      </button>
-    </ul>
-    <% } %>
-  </body>
-</html>
+<% layout('layouts/boilerplate') -%> <% for (let campground of campgrounds) { %>
+<h1><%= campground.title %></h1>
+<ul>
+  <li><%= campground.location %></li>
+  <li>ID: <%= campground._id %></li>
+  <button>
+    <a href="/campgrounds/<%= campground._id %>">AMEND CAMPGROUND</a>
+  </button>
+</ul>
+<% } %>
