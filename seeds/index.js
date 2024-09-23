@@ -25,6 +25,7 @@ const sample = (array) => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
+
 // Creates a random camp with location and title
 const randomLocation = async () => {
   for (let i = 0; i < 50; i++) {
