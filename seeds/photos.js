@@ -3,10 +3,10 @@ const randomNumber = Math.floor(Math.random() * 1000);
 
 randomPhoto = async () => {
   try {
-    const randomPhotoResponse = await fetch(
+    const response = await fetch(
       `https://picsum.photos/${randomNumber}`
     );
-    return randomPhotoResponse;
+    return response;
   } catch (e) {
     console.error(e);
   }
