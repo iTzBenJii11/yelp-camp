@@ -16,15 +16,22 @@ Yelp Camp is a web application that allows users to search, edit, delete, and ad
 // Express.js
 // MongoDB (via Mongoose)
 // EJS (Embedded JavaScript templating)
+// Bootstrap
+// CSS
+
 ```
 
 ## NPM Packages
 ```json
 {
-  "dependencies": {
-    "ejs": "^3.1.6",
-    "mongoose": "^5.12.3",
-    "express": "^4.17.1"
+    "ejs": "^3.1.10",
+    "ejs-mate": "^4.0.0",
+    "express": "^4.21.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.6.3",
+    "morgan": "^1.10.0",
+    "node": "^22.9.0",
+    "nodemon": "^3.1.7"
   }
 }
 ```
@@ -44,4 +51,8 @@ npm start
 ## License
 ```text
 This project is open-source and available under the MIT license.
+```
+```text
+Authors: Ben Charles Wood
+Version: 1.0.0
 ```
