@@ -8,8 +8,10 @@ const Campground = require("../models/campground");
 const cities = require("./cities");
 
 // Import seed helper file
-
 const { places, descriptors } = require("./seedhelper");
+
+// Import random photo function
+let { randomPhoto } = require("./photos");
 
 // Connect DB
 mongoose
@@ -25,17 +27,27 @@ const sample = (array) => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
-
 // Creates a random camp with location and title
 const randomLocation = async () => {
   for (let i = 0; i < 50; i++) {
-    // Generates a random number between 0 - 1000
+    // Generates a random number between 1 - 1000
     const randomNumber = Math.floor(Math.random() * 1000);
+
+    // Generates a random number between 1 - 300
+    const priceNumber = Math.floor(Math.random() * 300);
+
+    // Generates a random photo
+    const res = await randomPhoto();
+    const photoURL = res.url;
 
     // Creates our new campground
     const camp = new Campground({
       location: `${cities[randomNumber].city}, ${cities[randomNumber].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
+      description:
+        "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Possimus quasi consequuntur distinctio aliquid saepe obcaecati sed, impedit nulla perferendissequi eum voluptatum fugiat labore. Quis, a labore! Voluptates, inventore fuga.",
+      price: priceNumber,
+      image: photoURL,
     });
 
     // Saves the camps to the DB

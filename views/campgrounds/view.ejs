@@ -1,19 +1,34 @@
 <% layout('layouts/boilerplate') -%>
-<h1>Campground:</h1>
-<ul>
-  <li>Title: <%= campgroundType.title %></li>
-  <li>Location: <%= campgroundType.location %></li>
-</ul>
 
-<a class="btn btn-dark m-1" href="/campgrounds/<%= campgroundType._id %>/EDIT"
-  >Edit</a
->
+<div class="card my-4">
+  <h5 class="card-header"><%= campgroundType.title %></h5>
+  <div class="card-body">
+    <img
+      class="img-fluid rounded my-2"
+      src="<%= campgroundType.image %>"
+      alt=""
+      srcset=""
+    />
+    <h5 class="card-title"><%= campgroundType.location %></h5>
+    <h5 class="card-title"><%= campgroundType.description %></h5>
+    <p class="card-text">£<%= campgroundType.price %></p>
+  </div>
+</div>
 
-<form
-  action="/campgrounds/<%= campgroundType._id %>?_method=DELETE"
-  method="POST"
->
-  <button type="submit" class="btn btn-dark m-1">Delete</button>
-</form>
+<div class="container">
+  <a
+    class="btn btn-dark m-1 w-100"
+    href="/campgrounds/<%= campgroundType._id %>/EDIT"
+    >Edit</a
+  >
+  <form
+    action="/campgrounds/<%= campgroundType._id %>?_method=DELETE"
+    method="POST"
+  >
+    <button class="btn btn-dark m-1 w-100" type="submit">Delete</button>
+  </form>
 
-<a class="btn btn-dark m-1" href="/campgrounds" role="button">Return To All Campgrounds</a>
+  <a class="btn btn-dark m-1 w-100" href="/campgrounds" role="button"
+    >Return To All Campgrounds</a
+  >
+</div>

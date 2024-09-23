@@ -4,9 +4,18 @@
 
 <% for (let campground of campgrounds) { %>
 
-<ul>
-  <li>
-    <a href="/campgrounds/<%= campground._id %>"><%= campground.title %></a>
-  </li>
-</ul>
+<div class="card my-4">
+  <h5 class="card-header"><%= campground.title %></h5>
+  <div class="card-body">
+    <img
+      class="img-fluid rounded my-2"
+      src="<%= campground.image %>"
+      alt=""
+      srcset=""
+    />
+    <h5 class="card-title"><%= campground.description %></h5>
+    <p class="card-text">£<%= campground.price %></p>
+    <a href="/campgrounds/<%= campground._id %>" class="btn btn-dark"> Visit</a>
+  </div>
+</div>
 <% } %>
