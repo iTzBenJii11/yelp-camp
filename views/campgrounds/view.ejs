@@ -5,7 +5,7 @@
   <li>Location: <%= campgroundType.location %></li>
 </ul>
 
-<a class="btn btn-primary" href="/campgrounds/<%= campgroundType._id %>/EDIT"
+<a class="btn btn-dark" href="/campgrounds/<%= campgroundType._id %>/EDIT"
   >EDIT CAMPGROUND</a
 >
 
@@ -13,7 +13,7 @@
   action="/campgrounds/<%= campgroundType._id %>?_method=DELETE"
   method="POST"
 >
-  <button type="submit" class="btn btn-primary">DELETE CAMPGROUND</button>
+  <button type="submit" class="btn btn-dark">DELETE CAMPGROUND</button>
 </form>
 
-<a class="btn btn-primary" href="/campgrounds" role="button">GO BACK</a>
+<a class="btn btn-dark" href="/campgrounds" role="button">GO BACK</a>
