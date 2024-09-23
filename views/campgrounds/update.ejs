@@ -3,21 +3,27 @@
 <h1>Edit Campground</h1>
 
 <form action="/campgrounds/<%= campgroundType._id %>?_method=PUT" method="POST">
-  <label for="title">Current Title: </label>
-  <input
-    type="text"
-    id="title"
-    name="title"
-    value="<%= campgroundType.title %>"
-  />
+  <div class="mb-3">
+    <label for="title" class="form-label">Current Title </label>
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      name="title"
+      value="<%= campgroundType.title %>"
+    />
+  </div>
 
-  <label for="locations">Current Location:</label>
-  <input
-    type="text"
-    name="location"
-    id="location"
-    value="<%= campgroundType.location %>"
-  />
+  <div class="mb-3">
+    <label for="locations" class="form-label">Current Location</label>
+    <input
+      type="text"
+      class="form-control"
+      name="location"
+      id="location"
+      value="<%= campgroundType.location %>"
+    />
+  </div>
   <input class="btn btn-dark m-1" type="submit" value="Edit Campground" />
 
   <a

@@ -1,11 +1,15 @@
 <% layout('layouts/boilerplate') -%>
 <h1>Create Your Campground</h1>
 <form action="/campgrounds" method="POST">
-  <label for="title">Enter Title</label>
-  <input type="text" id="title" name="title" />
+  <div class="mb-3">
+    <label for="title" class="form-label">Enter Title</label>
+    <input type="text" class="form-control" id="title" name="title" />
+  </div>
 
-  <label for="location">Enter Location</label>
-  <input type="text" id="location" name="location" />
+  <div class="mb-3">
+    <label for="location" class="form-labal">Enter Location</label>
+    <input type="text" class="form-control" id="location" name="location" />
+  </div>
 
   <input class="btn btn-dark" type="submit" value="Create Campground" />
 </form>
