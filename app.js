@@ -15,6 +15,9 @@ app.set("views", path.join(__dirname, "/views"));
 const ejsEngine = require("ejs-mate");
 app.engine("ejs", ejsEngine);
 
+// App Error
+const AppError = require("./errors/AppError");
+
 ////////////// MIDDLEWARE //////////////
 // Allow the use for parsing
 app.use(express.urlencoded({ extended: true }));
@@ -106,10 +109,17 @@ app.put("/campgrounds/:id", async (req, res) => {
 ////////////// DISPLAY CAMPGROUNDS BY ID //////////////
 
 // GET: Display Campgrounds by ID
-app.get("/campgrounds/:id", async (req, res) => {
+app.get("/campgrounds/:id", async (req, res, next) => {
   const { id } = req.params;
-  const campgroundType = await Campground.findById(id);
-  res.render("campgrounds/view", { campgroundType });
+  try {
+    const campgroundType = await Campground.findById(id);
+    if (!campgroundType) {
+      return next(new AppError("Can't Locate Product", 404));
+    }
+    res.render("campgrounds/view", { campgroundType });
+  } catch (e) {
+    next(e);
+  }
 });
 
 ////////////// DELETE CAMPGROUND BY ID //////////////
@@ -119,9 +129,10 @@ app.delete("/campgrounds/:id", async (req, res) => {
   res.redirect("/campgrounds");
 });
 
-////////////// 404 ERROR PAGE //////////////
-app.use((req, res) => {
-  res.status(404).send("ERROR 404, PAGE CAN'T BE FOUND");
+////////////// BASIC ERROR HANDLING MIDDLEWARE //////////////
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Something went wrong" } = err;
+  res.status(status).send(message);
 });
 
 ////////////// START EXPRESS SERVER //////////////
