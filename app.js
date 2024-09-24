@@ -114,7 +114,7 @@ app.get("/campgrounds/:id", async (req, res, next) => {
   try {
     const campgroundType = await Campground.findById(id);
     if (!campgroundType) {
-      return next(new AppError("Can't Locate Product", 404));
+      throw new AppError("Can't Locate Product", 404);
     }
     res.render("campgrounds/view", { campgroundType });
   } catch (e) {
