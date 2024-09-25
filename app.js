@@ -97,32 +97,44 @@ app.get("/campgrounds/create", (req, res) => {
 });
 
 // POST: Created Campground Added To DB
-app.post("/campgrounds", async (req, res) => {
-  const newCampground = new Campground(req.body);
-  await newCampground.save();
-  res.redirect(`/campgrounds/${newCampground._id}`);
+app.post("/campgrounds", async (req, res, next) => {
+  try {
+    const newCampground = new Campground(req.body);
+    await newCampground.save();
+    res.redirect(`/campgrounds/${newCampground._id}`);
+  } catch (e) {
+    next(e);
+  }
 });
 
 ////////////// UPDATE EXISTING CAMPGROUND //////////////
 
-app.get("/campgrounds/:id/edit", async (req, res) => {
-  const { id } = req.params;
-  const campgroundType = await Campground.findById(id);
-  res.render("campgrounds/update", { campgroundType });
+app.get("/campgrounds/:id/edit", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const campgroundType = await Campground.findById(id);
+    res.render("campgrounds/update", { campgroundType });
+  } catch (e) {
+    next(e);
+  }
 });
 
 app.put("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  const campgroundEdit = await Campground.findByIdAndUpdate(id, req.body);
-  res.redirect(`${campgroundEdit._id}`);
+  try {
+    const { id } = req.params;
+    const campgroundEdit = await Campground.findByIdAndUpdate(id, req.body);
+    res.redirect(`${campgroundEdit._id}`);
+  } catch (e) {
+    next(e);
+  }
 });
 
 ////////////// DISPLAY CAMPGROUNDS BY ID //////////////
 
 // GET: Display Campgrounds by ID
 app.get("/campgrounds/:id", async (req, res, next) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const campgroundType = await Campground.findById(id);
     if (!campgroundType) {
       throw new AppError("Can't Locate Product", 404);
@@ -134,10 +146,14 @@ app.get("/campgrounds/:id", async (req, res, next) => {
 });
 
 ////////////// DELETE CAMPGROUND BY ID //////////////
-app.delete("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  await Campground.findByIdAndDelete(id);
-  res.redirect("/campgrounds");
+app.delete("/campgrounds/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect("/campgrounds");
+  } catch (e) {
+    next(e);
+  }
 });
 
 ////////////// BASIC ERROR HANDLING MIDDLEWARE //////////////
