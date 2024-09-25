@@ -24,6 +24,29 @@
       value="<%= campgroundType.location %>"
     />
   </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Current Description</label>
+    <input
+      type="text"
+      class="form-control"
+      name="description"
+      id="description"
+      value="<%= campgroundType.description %>"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="price" class="form-label">Current Price</label>
+    <input
+      type="number"
+      class="form-control"
+      name="price"
+      id="price"
+      value="<%= campgroundType.price %>"
+    />
+  </div>
+
   <input class="btn btn-dark m-1" type="submit" value="Edit Campground" />
 
   <a
