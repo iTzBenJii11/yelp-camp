@@ -72,10 +72,21 @@ app.get("/", (req, res) => {
 
 ////////////// DISPLAYS CAMPGROUNDS //////////////
 
-// GET: Display Campgrounds
-app.get("/campgrounds", async (req, res) => {
-  const campgrounds = await Campground.find({});
-  res.render("campgrounds/index", { campgrounds });
+// GET: Display all Campgrounds
+app.get("/campgrounds", async (req, res, next) => {
+  try {
+    // Fetch all campgrounds from database
+    const campgrounds = await Campground.find({});
+    // Throw error if no campgrounds are found
+    if (campgrounds.length === 0) {
+      throw new AppError("No campgrounds found", 404);
+    }
+    // Render all campgrounds index page
+    res.render("campgrounds/index", { campgrounds });
+  } catch (e) {
+    // Pass any errors to the global error handler
+    next(e);
+  }
 });
 
 ////////////// CREATE CAMPGROUND AND ADD TO DATABASE //////////////
