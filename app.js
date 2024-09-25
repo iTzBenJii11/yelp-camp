@@ -15,8 +15,11 @@ app.set("views", path.join(__dirname, "/views"));
 const ejsEngine = require("ejs-mate");
 app.engine("ejs", ejsEngine);
 
-// App Error
+// Global app error
 const AppError = require("./errors/AppError");
+
+// Helper Function for error handling
+const wrapAsync = require("./errors/WarpAsync");
 
 ////////////// MIDDLEWARE //////////////
 // Allow the use for parsing
@@ -73,8 +76,9 @@ app.get("/", (req, res) => {
 ////////////// DISPLAYS CAMPGROUNDS //////////////
 
 // GET: Display all Campgrounds
-app.get("/campgrounds", async (req, res, next) => {
-  try {
+app.get(
+  "/campgrounds",
+  wrapAsync(async (req, res, next) => {
     // Fetch all campgrounds from database
     const campgrounds = await Campground.find({});
     // Throw error if no campgrounds are found
@@ -83,11 +87,8 @@ app.get("/campgrounds", async (req, res, next) => {
     }
     // Render all campgrounds index page
     res.render("campgrounds/index", { campgrounds });
-  } catch (e) {
-    // Pass any errors to the global error handler
-    next(e);
-  }
-});
+  })
+);
 
 ////////////// CREATE CAMPGROUND AND ADD TO DATABASE //////////////
 
@@ -97,64 +98,59 @@ app.get("/campgrounds/create", (req, res) => {
 });
 
 // POST: Created Campground Added To DB
-app.post("/campgrounds", async (req, res, next) => {
-  try {
+app.post(
+  "/campgrounds",
+  wrapAsync(async (req, res, next) => {
     const newCampground = new Campground(req.body);
     await newCampground.save();
     res.redirect(`/campgrounds/${newCampground._id}`);
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
 ////////////// UPDATE EXISTING CAMPGROUND //////////////
 
-app.get("/campgrounds/:id/edit", async (req, res, next) => {
-  try {
+app.get(
+  "/campgrounds/:id/edit",
+  wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const campgroundType = await Campground.findById(id);
     res.render("campgrounds/update", { campgroundType });
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
-app.put("/campgrounds/:id", async (req, res) => {
-  try {
+app.put(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res) => {
     const { id } = req.params;
     const campgroundEdit = await Campground.findByIdAndUpdate(id, req.body);
     res.redirect(`${campgroundEdit._id}`);
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
 ////////////// DISPLAY CAMPGROUNDS BY ID //////////////
 
 // GET: Display Campgrounds by ID
-app.get("/campgrounds/:id", async (req, res, next) => {
-  try {
+app.get(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const campgroundType = await Campground.findById(id);
     if (!campgroundType) {
       throw new AppError("Can't Locate Product", 404);
     }
     res.render("campgrounds/view", { campgroundType });
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
 ////////////// DELETE CAMPGROUND BY ID //////////////
-app.delete("/campgrounds/:id", async (req, res, next) => {
-  try {
+app.delete(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect("/campgrounds");
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
 ////////////// BASIC ERROR HANDLING MIDDLEWARE //////////////
 app.use((err, req, res, next) => {
