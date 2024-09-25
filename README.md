@@ -44,8 +44,11 @@ git clone <repository-url>
 // Install dependencies
 npm install
 
-// Start the application
-npm start
+// Start the application with Nodemon
+nodemon app.js
+
+// Start the application with Node.js
+node app.js
 ```
 
 ## License
