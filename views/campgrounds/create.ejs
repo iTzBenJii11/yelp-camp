@@ -3,22 +3,22 @@
 <form action="/campgrounds" method="POST">
   <div class="mb-3">
     <label for="title" class="form-label">Enter Title</label>
-    <input type="text" class="form-control" id="title" name="title" />
+    <input type="text" class="form-control" id="title" name="title" required/>
   </div>
 
   <div class="mb-3">
     <label for="location" class="form-labal">Enter Location</label>
-    <input type="text" class="form-control" id="location" name="location" />
+    <input type="text" class="form-control" id="location" name="location" required/>
   </div>
 
   <div class="mb-3">
     <label for="description" class="form-labal">Enter Description</label>
-    <input type="text" class="form-control" id="description" name="description" />
+    <input type="text" class="form-control" id="description" name="description" required />
   </div>
 
   <div class="mb-3">
     <label for="price" class="form-labal">Enter Cost Per Night</label>
-    <input type="number" class="form-control" id="price" name="price" />
+    <input type="number" class="form-control" id="price" name="price" required />
   </div>
 
   <input class="btn btn-dark" type="submit" value="Create Campground" />
