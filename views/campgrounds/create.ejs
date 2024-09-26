@@ -1,9 +1,11 @@
 <% layout('layouts/boilerplate') -%>
 <h1>New Campground</h1>
-<form action="/campgrounds" method="POST">
+<form class="needs-validation" novalidate action="/campgrounds" method="POST">
   <div class="mb-3">
     <label for="title" class="form-label">Enter Title</label>
     <input type="text" class="form-control" id="title" name="title" required />
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Title</div>
   </div>
 
   <div class="mb-3">
@@ -15,6 +17,8 @@
       name="location"
       required
     />
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Location</div>
   </div>
 
   <div class="input-group mb-3">
@@ -28,6 +32,8 @@
       placeholder="0.00"
       required
     />
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Amount</div>
   </div>
 
   <div class="mb-3">
@@ -39,7 +45,35 @@
       rows="2"
       required
     ></textarea>
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Description</div>
   </div>
 
   <input class="btn btn-success" type="submit" value="Add Campground" />
 </form>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".needs-validation");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
+
