@@ -1,25 +1,45 @@
 <% layout('layouts/boilerplate') -%>
-<h1>Create Your Campground</h1>
+<h1>New Campground</h1>
 <form action="/campgrounds" method="POST">
   <div class="mb-3">
     <label for="title" class="form-label">Enter Title</label>
-    <input type="text" class="form-control" id="title" name="title" required/>
+    <input type="text" class="form-control" id="title" name="title" required />
   </div>
 
   <div class="mb-3">
     <label for="location" class="form-labal">Enter Location</label>
-    <input type="text" class="form-control" id="location" name="location" required/>
+    <input
+      type="text"
+      class="form-control"
+      id="location"
+      name="location"
+      required
+    />
+  </div>
+
+  <div class="input-group mb-3">
+    <label for="price" class="form-label visually-hidden">Cost in Pounds</label>
+    <span class="input-group-text">£</span>
+    <input
+      type="number"
+      class="form-control"
+      id="price"
+      name="price"
+      placeholder="0.00"
+      required
+    />
   </div>
 
   <div class="mb-3">
-    <label for="description" class="form-labal">Enter Description</label>
-    <input type="text" class="form-control" id="description" name="description" required />
+    <label for="description" class="form-label">Enter Description</label>
+    <textarea
+      class="form-control"
+      id="description"
+      name="description"
+      rows="2"
+      required
+    ></textarea>
   </div>
 
-  <div class="mb-3">
-    <label for="price" class="form-labal">Enter Cost Per Night</label>
-    <input type="number" class="form-control" id="price" name="price" required />
-  </div>
-
-  <input class="btn btn-primary" type="submit" value="Create Campground" />
+  <input class="btn btn-success" type="submit" value="Add Campground" />
 </form>
