@@ -2,7 +2,12 @@
 
 <h1>Edit Campground</h1>
 
-<form action="/campgrounds/<%= campgroundType._id %>?_method=PUT" method="POST">
+<form
+  class="needs-validation"
+  novalidate
+  action="/campgrounds/<%= campgroundType._id %>?_method=PUT"
+  method="POST"
+>
   <div class="mb-3">
     <label for="title" class="form-label">Current Title </label>
     <input
@@ -13,6 +18,8 @@
       value="<%= campgroundType.title %>"
       required
     />
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Title</div>
   </div>
 
   <div class="mb-3">
@@ -25,6 +32,8 @@
       value="<%= campgroundType.location %>"
       required
     />
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Location</div>
   </div>
 
   <div class="mb-3">
@@ -37,10 +46,14 @@
       value="<%= campgroundType.description %>"
       required
     />
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Description</div>
   </div>
 
-  <div class="mb-3">
-    <label for="price" class="form-label">Current Price</label>
+  <div class="input-group mb-3">
+    <label for="price" class="form-label visually-hidden">Current Price</label>
+    <span class="input-group-text">£</span>
+
     <input
       type="number"
       class="form-control"
@@ -49,6 +62,8 @@
       value="<%= campgroundType.price %>"
       required
     />
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Amount</div>
   </div>
 
   <input class="btn btn-success m-1" type="submit" value="Edit Campground" />
