@@ -4,6 +4,9 @@
 const express = require("express");
 const app = express();
 
+// Random Joke
+const { randomJoke } = require("./randomJoke");
+
 // EJS
 app.set("view engine", "ejs");
 
@@ -156,14 +159,25 @@ app.delete(
 
 // Handles errors for pages/routes which are not valid
 app.all("*", (req, res, next) => {
-  next(new AppError("Page Not Found", 404));
+  next(new AppError("Page Not Found!", 404));
 });
 
 // Handles any errors we may not defined
-app.use((err, req, res, next) => {
-  // Des the statusError and Message from error and provides a default error code and message
-  const { statusCode = 500, message = "Something went wrong" } = err;
-  res.status(statusCode).send(message);
+app.use(async (err, req, res, next) => {
+  try {
+    // Des the statusError and Message from error and provides a default error code and message
+    const { statusCode = 500, message = "Something went wrong" } = err;
+    // Joke for error pages
+
+    const jokeData = await randomJoke();
+    const joke = jokeData.joke; // Extract the joke from the API response
+    console.log(joke)
+
+    res.status(statusCode).render("error-page", { statusCode, message, joke });
+  } catch (e) {
+    console.error(e);
+    console.log("FUCKKKKKKKKK");
+  }
 });
 
 ////////////// START EXPRESS SERVER //////////////
