@@ -136,7 +136,7 @@ app.get(
     const { id } = req.params;
     const campgroundType = await Campground.findById(id);
     if (!campgroundType) {
-      throw new AppError("Can't Locate Product", 404);
+      throw new AppError("Can't Locate Product!!!", 404);
     }
     res.render("campgrounds/view", { campgroundType });
   })
@@ -152,10 +152,18 @@ app.delete(
   })
 );
 
-////////////// BASIC ERROR HANDLING MIDDLEWARE //////////////
+////////////// ERROR HANDLING MIDDLEWARE //////////////
+
+// Handles errors for pages/routes which are not valid
+app.all("*", (req, res, next) => {
+  next(new AppError("Page Not Found", 404));
+});
+
+// Handles any errors we may not defined
 app.use((err, req, res, next) => {
-  const { status = 500, message = "Something went wrong" } = err;
-  res.status(status).send(message);
+  // Des the statusError and Message from error and provides a default error code and message
+  const { statusCode = 500, message = "Something went wrong" } = err;
+  res.status(statusCode).send(message);
 });
 
 ////////////// START EXPRESS SERVER //////////////
