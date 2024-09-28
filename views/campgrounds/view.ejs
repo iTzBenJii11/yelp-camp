@@ -2,24 +2,24 @@
 
 <div class="row g-0" >
     <div class="card col-6 offset-3">
-      <img src="<%= campgroundType.image %>" alt="" class="img-fluid rounded-top" />
+      <img src="<%= campground.image %>" alt="" class="img-fluid rounded-top" />
       <div class="card-body">
-        <h5 class="card-title"><%= campgroundType.title %></h5>
-        <p class="card-text"><%= campgroundType.description %></p>
+        <h5 class="card-title"><%= campground.title %></h5>
+        <p class="card-text"><%= campground.description %></p>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item"><%= campgroundType.location %></li>
-        <li class="list-group-item">£<%= campgroundType.price %>/night</li>
+        <li class="list-group-item"><%= campground.location %></li>
+        <li class="list-group-item">£<%= campground.price %>/night</li>
       </ul>
 
       <div class="card-body d-flex">
         <a
           class="btn btn-lg btn-secondary m-1"
-          href="/campgrounds/<%= campgroundType._id %>/EDIT"
+          href="/campgrounds/<%= campground._id %>/EDIT"
           >Edit</a
         >
         <form
-          action="/campgrounds/<%= campgroundType._id %>?_method=DELETE"
+          action="/campgrounds/<%= campground._id %>?_method=DELETE"
           method="POST"
         >
           <button class="btn btn-danger btn-lg m-1" type="submit">

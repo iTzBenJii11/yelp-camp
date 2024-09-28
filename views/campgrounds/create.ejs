@@ -3,7 +3,13 @@
 <form class="needs-validation" novalidate action="/campgrounds" method="POST">
   <div class="mb-3">
     <label for="title" class="form-label">Enter Title</label>
-    <input type="text" class="form-control" id="title" name="title" required />
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      name="campground[title]"
+      required
+    />
     <div class="valid-feedback">Looks Good!</div>
     <div class="invalid-feedback">Enter Title</div>
   </div>
@@ -14,7 +20,7 @@
       type="text"
       class="form-control"
       id="location"
-      name="location"
+      name="campground[location]"
       required
     />
     <div class="valid-feedback">Looks Good!</div>
@@ -28,7 +34,7 @@
       type="number"
       class="form-control"
       id="price"
-      name="price"
+      name="campground[price]"
       placeholder="0.00"
       required
     />
@@ -41,7 +47,7 @@
     <textarea
       class="form-control"
       id="description"
-      name="description"
+      name="campground[description]"
       rows="2"
       required
     ></textarea>

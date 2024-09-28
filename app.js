@@ -4,6 +4,9 @@
 const express = require("express");
 const app = express();
 
+// Joi
+const Joi = require("Joi");
+
 // Random Joke
 const { randomJoke } = require("./randomJoke");
 
@@ -104,9 +107,9 @@ app.get("/campgrounds/create", (req, res) => {
 app.post(
   "/campgrounds",
   wrapAsync(async (req, res, next) => {
-    const newCampground = new Campground(req.body);
-    await newCampground.save();
-    res.redirect(`/campgrounds/${newCampground._id}`);
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 
@@ -116,8 +119,8 @@ app.get(
   "/campgrounds/:id/edit",
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
-    const campgroundType = await Campground.findById(id);
-    res.render("campgrounds/update", { campgroundType });
+    const campground = await Campground.findById(id);
+    res.render("campgrounds/update", { campground });
   })
 );
 
@@ -125,8 +128,11 @@ app.put(
   "/campgrounds/:id",
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const campgroundEdit = await Campground.findByIdAndUpdate(id, req.body);
-    res.redirect(`${campgroundEdit._id}`);
+    const campground = await Campground.findByIdAndUpdate(
+      id,
+      req.body.campground
+    );
+    res.redirect(`${campground._id}`);
   })
 );
 
@@ -137,11 +143,11 @@ app.get(
   "/campgrounds/:id",
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
-    const campgroundType = await Campground.findById(id);
-    if (!campgroundType) {
+    const campground = await Campground.findById(id);
+    if (!campground) {
       throw new AppError("Can't Locate Product!!!", 404);
     }
-    res.render("campgrounds/view", { campgroundType });
+    res.render("campgrounds/view", { campground });
   })
 );
 
