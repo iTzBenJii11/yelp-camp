@@ -162,7 +162,7 @@ app.all("*", (req, res, next) => {
   next(new AppError("Page Not Found!", 404));
 });
 
-// Handles any errors we may not defined
+// Handles errors which we've not defined and response with a dad joke and error page.
 app.use(async (err, req, res, next) => {
   try {
     // Des the statusError and Message from error and provides a default error code and message
@@ -171,12 +171,12 @@ app.use(async (err, req, res, next) => {
 
     const jokeData = await randomJoke();
     const joke = jokeData.joke; // Extract the joke from the API response
-    console.log(joke)
+    console.log(joke); // Test purpose
 
     res.status(statusCode).render("error-page", { statusCode, message, joke });
   } catch (e) {
     console.error(e);
-    console.log("FUCKKKKKKKKK");
+    console.log("No dad joke available...");
   }
 });
 
