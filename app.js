@@ -4,9 +4,6 @@
 const express = require("express");
 const app = express();
 
-// Joi
-const Joi = require("Joi");
-
 // Random Joke
 const { randomJoke } = require("./randomJoke");
 
@@ -27,6 +24,9 @@ const AppError = require("./errors/AppError");
 // Helper Function for error handling
 const wrapAsync = require("./errors/WarpAsync");
 
+// Import Joi Schema
+const { campgroundSchema } = require("./JoiSchema/validateCampground");
+
 ////////////// MIDDLEWARE //////////////
 // Allow the use for parsing
 app.use(express.urlencoded({ extended: true }));
@@ -40,6 +40,18 @@ const morgan = require("morgan");
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
+
+// Validate Campgrounds
+const validateCampground = (req, res, next) => {
+  const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    // Map over the errors array
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new AppError(msg, 400);
+  } else {
+    next();
+  }
+};
 
 ////////////// DATABASE IMPLEMENTATION //////////////
 
@@ -106,23 +118,8 @@ app.get("/campgrounds/create", (req, res) => {
 // POST: Created Campground Added To DB
 app.post(
   "/campgrounds",
+  validateCampground,
   wrapAsync(async (req, res, next) => {
-    // Joi Schema
-    const campgroundSchema = Joi.object({
-      campground: Joi.object({
-        title: Joi.string().required(),
-        price: Joi.number().required().min(1),
-        location: Joi.string().required(),
-        description: Joi.string().required(),
-      }).required(),
-    });
-
-    const { error } = campgroundSchema.validate(req.body);
-    if (error) {
-      const msg = error.details.map((el) => el.message).join(",");
-      throw new AppError(msg, 400);
-    }
-
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -142,6 +139,7 @@ app.get(
 
 app.put(
   "/campgrounds/:id",
+  validateCampground,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(
@@ -177,7 +175,7 @@ app.delete(
   })
 );
 
-////////////// ERROR HANDLING MIDDLEWARE //////////////
+////////////// ERROR HANDLING //////////////
 
 // Handles errors for pages/routes which are not valid
 app.all("*", (req, res, next) => {
