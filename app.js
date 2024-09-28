@@ -107,6 +107,22 @@ app.get("/campgrounds/create", (req, res) => {
 app.post(
   "/campgrounds",
   wrapAsync(async (req, res, next) => {
+    // Joi Schema
+    const campgroundSchema = Joi.object({
+      campground: Joi.object({
+        title: Joi.string().required(),
+        price: Joi.number().required().min(1),
+        location: Joi.string().required(),
+        description: Joi.string().required(),
+      }).required(),
+    });
+
+    const { error } = campgroundSchema.validate(req.body);
+    if (error) {
+      const msg = error.details.map((el) => el.message).join(",");
+      throw new AppError(msg, 400);
+    }
+
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
