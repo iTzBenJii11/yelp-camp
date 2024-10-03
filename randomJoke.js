@@ -1,7 +1,7 @@
 // Random joke API
 module.exports.randomJoke = async () => {
   try {
-    let res = await fetch(`https://icanhazdadjoke.com/`, {
+    let res = await fetch(``, { // https://icanhazdadjoke.com/
       // Tells API we expect a JSON response
       headers: {
         Accept: "application/json",
@@ -13,3 +13,5 @@ module.exports.randomJoke = async () => {
     console.error(e);
   }
 };
+
+// Remove API at work due to security policy in place
