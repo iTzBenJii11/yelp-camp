@@ -33,8 +33,13 @@
 
 <div class="mb-3 col-6 offset-3">
   <h2>Leave a Review</h2>
-  <form action="/campground/<%= campground._id %>/reviews" method="POST">
-    <div>
+  <form
+    class="needs-validation"
+    novalidate
+    action="/campground/<%= campground._id %>/reviews"
+    method="POST"
+  >
+    <div class="mb-3">
       <label for="range" class="form-label"> Rating </label>
       <input
         type="range"
@@ -43,12 +48,22 @@
         name="review[range]"
         min="0"
         max="5"
+        required
       />
+      <div class="valid-feedback">Looks Good!</div>
+      <div class="invalid-feedback">Select Review</div>
     </div>
-    <div>
+    <div class="mb-3">
       <label for="text" class="form-label"> Review </label>
-      <textarea class="form-control" id="text" name="review[text]" row="5">
-      </textarea>
+      <textarea
+        class="form-control"
+        id="text"
+        name="review[text]"
+        rows="3"
+        required
+      ></textarea>
+      <div class="valid-feedback">Looks Good!</div>
+      <div class="invalid-feedback">Write Review</div>
     </div>
     <input class="btn btn-success mt-3" type="submit" value="Add Review" />
   </form>
