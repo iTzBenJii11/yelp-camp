@@ -58,8 +58,9 @@ const validateCampground = (req, res, next) => {
 // Mongoose / MongoDB
 const mongoose = require("mongoose");
 
-// Import Schema
+// Import Campground Schema to create new Campgrounds
 const Campground = require("./models/campground");
+const Review = require("./models/reviews");
 
 // Connect DB
 mongoose
@@ -122,6 +123,32 @@ app.post(
   wrapAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
+
+// POST: Add review to Campground
+
+app.post(
+  "/campground/:id/reviews",
+  wrapAsync(async (req, res, next) => {
+    // Get id
+    const { id } = req.params;
+
+    // Find campground by id
+    const campground = await Campground.findById(id);
+
+    // Saves the body of the review
+    const review = new Review(req.body.review);
+
+    // Add review to campground array
+    campground.reviews.push(review);
+
+    // Saves review and campground
+    await review.save();
+    await campground.save();
+
+    // Redirect to the campground
     res.redirect(`/campgrounds/${campground._id}`);
   })
 );

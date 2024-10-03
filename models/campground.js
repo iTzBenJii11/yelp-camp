@@ -14,10 +14,12 @@ const CampgroundSchema = new Schema({
   image: String,
 
   // One-To-Many relationship, a campground can have many reviews but a reviews will be associated with one campground.
-  reviews: {
-    type: Schema.Types.ObjectId,
-    ref: "Review",
-  },
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
 });
 
 const Campground = mongoose.model("Campground", CampgroundSchema);

@@ -33,7 +33,7 @@
 
 <div class="mb-3 col-6 offset-3">
   <h2>Leave a Review</h2>
-  <form action="" method="post">
+  <form action="/campground/<%= campground._id %>/reviews" method="POST">
     <div>
       <label for="range" class="form-label"> Rating </label>
       <input
@@ -50,6 +50,6 @@
       <textarea class="form-control" id="text" name="review[text]" row="5">
       </textarea>
     </div>
-    <button type="button" class="btn btn-success mt-3">Submit</button>
+    <input class="btn btn-success mt-3" type="submit" value="Add Review" />
   </form>
 </div>
