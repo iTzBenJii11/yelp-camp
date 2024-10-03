@@ -36,7 +36,7 @@
   <form
     class="needs-validation"
     novalidate
-    action="/campground/<%= campground._id %>/reviews"
+    action="/campgrounds/<%= campground._id %>/reviews"
     method="POST"
   >
     <div class="mb-3">
@@ -45,7 +45,7 @@
         type="range"
         class="form-range"
         id="range"
-        name="review[range]"
+        name="review[rating]"
         min="0"
         max="5"
         required
@@ -58,7 +58,7 @@
       <textarea
         class="form-control"
         id="text"
-        name="review[text]"
+        name="review[body]"
         rows="3"
         required
       ></textarea>

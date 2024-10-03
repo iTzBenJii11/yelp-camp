@@ -24,8 +24,9 @@ const AppError = require("./errors/AppError");
 // Helper Function for error handling
 const wrapAsync = require("./errors/WarpAsync");
 
-// Import Joi Schema
+// Import Joi Schema for Campground & Reviews
 const { campgroundSchema } = require("./JoiSchema/validateCampground");
+const { reviewSchema } = require("./JoiSchema/validateReviews");
 
 ////////////// MIDDLEWARE //////////////
 // Allow the use for parsing
@@ -44,6 +45,17 @@ app.use(
 // Validate Campgrounds
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    // Map over the errors array
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new AppError(msg, 400);
+  } else {
+    next();
+  }
+};
+
+const validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
   if (error) {
     // Map over the errors array
     const msg = error.details.map((el) => el.message).join(",");
@@ -127,10 +139,11 @@ app.post(
   })
 );
 
-// POST: Add review to Campground
+// POST: Create a review and add to campground
 
 app.post(
-  "/campground/:id/reviews",
+  "/campgrounds/:id/reviews",
+  validateReview,
   wrapAsync(async (req, res, next) => {
     // Get id
     const { id } = req.params;
