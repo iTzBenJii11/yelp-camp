@@ -190,6 +190,30 @@ app.put(
   })
 );
 
+////////////// DELETE //////////////
+
+// Delete campground by ID
+app.delete(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect("/campgrounds");
+  })
+);
+
+// Delete Review of a Campground
+app.delete(
+  "/campgrounds/:campgroundId/reviews/:reviewId",
+  wrapAsync(async (req, res, next) => {
+    const { campgroundId, reviewId } = req.params;
+    await Review.findOneAndDelete({
+      _id: reviewId,
+    });
+    res.redirect(`/campgrounds/${campgroundId}`);
+  })
+);
+
 ////////////// DISPLAY CAMPGROUNDS BY ID //////////////
 
 // GET: Display Campgrounds by ID
@@ -212,40 +236,30 @@ app.get(
   })
 );
 
-////////////// DELETE CAMPGROUND BY ID //////////////
-app.delete(
-  "/campgrounds/:id",
-  wrapAsync(async (req, res, next) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect("/campgrounds");
-  })
-);
-
 ////////////// ERROR HANDLING //////////////
 
-// Handles errors for pages/routes which are not valid
-app.all("*", (req, res, next) => {
-  next(new AppError("Page Not Found!", 404));
-});
+// // Handles errors for pages/routes which are not valid
+// app.all("*", (req, res, next) => {
+//   next(new AppError("Page Not Found!", 404));
+// });
 
-// Handles errors which we've not defined and response with a dad joke and error page.
-app.use(async (err, req, res, next) => {
-  try {
-    // Des the statusError and Message from error and provides a default error code and message
-    const { statusCode = 500, message = "Something went wrong" } = err;
-    // Joke for error pages
+// // Handles errors which we've not defined and response with a dad joke and error page.
+// app.use(async (err, req, res, next) => {
+//   try {
+//     // Des the statusError and Message from error and provides a default error code and message
+//     const { statusCode = 500, message = "Something went wrong" } = err;
+//     // Joke for error pages
 
-    const jokeData = await randomJoke();
-    const joke = jokeData.joke; // Extract the joke from the API response
-    console.log(joke); // Test purpose
+//     const jokeData = await randomJoke();
+//     const joke = jokeData.joke; // Extract the joke from the API response
+//     console.log(joke); // Test purpose
 
-    res.status(statusCode).render("error-page", { statusCode, message, joke });
-  } catch (e) {
-    console.error(e);
-    console.log("No dad joke available...");
-  }
-});
+//     res.status(statusCode).render("error-page", { statusCode, message, joke });
+//   } catch (e) {
+//     console.error(e);
+//     console.log("No dad joke available...");
+//   }
+// });
 
 ////////////// START EXPRESS SERVER //////////////
 

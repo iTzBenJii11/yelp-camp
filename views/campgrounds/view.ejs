@@ -87,7 +87,7 @@
 
         <div class="reviewLogic">
           <% if (campground.reviews.length === 0) { %>
-          <p>No reviews found</p>
+          <p>No Reviews</p>
           <% } else { %>
           <h3 class="mt-3">Reviews</h3>
           <% for(let review of campground.reviews) { %>
@@ -95,6 +95,13 @@
             <div class="card-body">
               <p>Rating: <%= review.rating %></p>
               <p>Review: <%= review.body %></p>
+
+              <form
+                action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+                method="POST"
+              >
+                <button class="btn btn-success">Delete Review</button>
+              </form>
             </div>
           </div>
           <% } %> <% } %>
