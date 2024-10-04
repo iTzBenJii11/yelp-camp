@@ -190,7 +190,7 @@ app.put(
   })
 );
 
-////////////// DELETE //////////////
+////////////// DELETE CAMPGROUND BY ID //////////////
 
 // Delete campground by ID
 app.delete(
@@ -201,6 +201,8 @@ app.delete(
     res.redirect("/campgrounds");
   })
 );
+
+////////////// DELETE REVIEW BY ID //////////////
 
 // Delete Review of a Campground
 app.delete(
