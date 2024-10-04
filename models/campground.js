@@ -22,6 +22,15 @@ const CampgroundSchema = new Schema({
   ],
 });
 
-const Campground = mongoose.model("Campground", CampgroundSchema);
+// Mongoose delete middleware
+CampgroundSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    // Assuming 'reviews' is an array of review IDs in the campground document
+    await Review.deleteMany({
+      _id: { $in: doc.reviews },
+    });
+  }
+});
 
+const Campground = mongoose.model("Campground", CampgroundSchema);
 module.exports = Campground;
