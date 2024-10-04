@@ -197,10 +197,17 @@ app.get(
   "/campgrounds/:id",
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id);
+    // Find the campground by ID and then populates with the reviews.
+    const campground = await Campground.findById(id).populate("reviews");
+
+    // Checks to see if we can locate a campground
     if (!campground) {
       throw new AppError("Can't Locate Product!!!", 404);
     }
+
+    // Test that we can access reviews
+    console.log(`Testing reviews: ${campground.reviews}`); // Accessing populated reviews directly
+
     res.render("campgrounds/view", { campground });
   })
 );
