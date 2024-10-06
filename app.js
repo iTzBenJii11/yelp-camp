@@ -21,12 +21,11 @@ app.engine("ejs", ejsEngine);
 // Global app error
 const AppError = require("./errors/AppError");
 
-// Helper Function for error handling
-const wrapAsync = require("./errors/WarpAsync");
+// Import Campgrounds Routing
+const campgrounds = require("./routes/campgrounds");
 
-// Import Joi Schema for Campground & Reviews
-const { campgroundSchema } = require("./JoiSchema/validateCampground");
-const { reviewSchema } = require("./JoiSchema/validateReviews");
+// Import Reviews Routing
+const reviews = require("./routes/reviews");
 
 ////////////// MIDDLEWARE //////////////
 // Allow the use for parsing
@@ -42,37 +41,10 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
 
-// Validate Campgrounds
-const validateCampground = (req, res, next) => {
-  const { error } = campgroundSchema.validate(req.body);
-  if (error) {
-    // Map over the errors array
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new AppError(msg, 400);
-  } else {
-    next();
-  }
-};
-
-const validateReview = (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body);
-  if (error) {
-    // Map over the errors array
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new AppError(msg, 400);
-  } else {
-    next();
-  }
-};
-
 ////////////// DATABASE IMPLEMENTATION //////////////
 
 // Mongoose / MongoDB
 const mongoose = require("mongoose");
-
-// Import Campground Schema to create new Campgrounds
-const Campground = require("./models/campground");
-const Review = require("./models/reviews");
 
 // Connect DB
 mongoose
@@ -97,151 +69,18 @@ app.get("/secret", secretPage, (req, res) => {
   res.send("HELLO AND WELCOME TO THIS SECRET PAGE");
 });
 
-////////////// Routing CRUD //////////////
+////////////// Routing //////////////
 
 // GET: Home Page
 app.get("/", (req, res) => {
   res.render("home");
 });
 
-////////////// DISPLAYS CAMPGROUNDS //////////////
+// Campgrounds Router
+app.use("/campgrounds", campgrounds);
 
-// GET: Display all Campgrounds
-app.get(
-  "/campgrounds",
-  wrapAsync(async (req, res, next) => {
-    // Fetch all campgrounds from database
-    const campgrounds = await Campground.find({});
-    // Throw error if no campgrounds are found
-    if (campgrounds.length === 0) {
-      throw new AppError("No campgrounds found", 404);
-    }
-    // Render all campgrounds index page
-    res.render("campgrounds/index", { campgrounds });
-  })
-);
-
-////////////// CREATE CAMPGROUND AND ADD TO DATABASE //////////////
-
-// GET: Create Campground
-app.get("/campgrounds/create", (req, res) => {
-  res.render("campgrounds/create");
-});
-
-// POST: Created Campground Added To DB
-app.post(
-  "/campgrounds",
-  validateCampground,
-  wrapAsync(async (req, res, next) => {
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-  })
-);
-
-// POST: Create a review and add to campground
-
-app.post(
-  "/campgrounds/:id/reviews",
-  validateReview,
-  wrapAsync(async (req, res, next) => {
-    // Get id
-    const { id } = req.params;
-
-    // Find campground by id
-    const campground = await Campground.findById(id);
-
-    // Saves the body of the review
-    const review = new Review(req.body.review);
-
-    // Add review to campground array
-    campground.reviews.push(review);
-
-    // Saves review and campground
-    await review.save();
-    await campground.save();
-
-    // Redirect to the campground
-    res.redirect(`/campgrounds/${campground._id}`);
-  })
-);
-
-////////////// UPDATE EXISTING CAMPGROUND //////////////
-
-app.get(
-  "/campgrounds/:id/edit",
-  wrapAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const campground = await Campground.findById(id);
-    res.render("campgrounds/update", { campground });
-  })
-);
-
-app.put(
-  "/campgrounds/:id",
-  validateCampground,
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(
-      id,
-      req.body.campground
-    );
-    res.redirect(`${campground._id}`);
-  })
-);
-
-////////////// DELETE CAMPGROUND BY ID //////////////
-
-// Delete campground by ID
-app.delete(
-  "/campgrounds/:id",
-  wrapAsync(async (req, res, next) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect("/campgrounds");
-  })
-);
-
-////////////// DELETE REVIEW BY ID //////////////
-
-// Delete Review of a Campground
-app.delete(
-  "/campgrounds/:campgroundId/reviews/:reviewId",
-  wrapAsync(async (req, res) => {
-    const { campgroundId, reviewId } = req.params;
-
-    await Campground.findOneAndRemove(campgroundId, {
-      $pull: { reviews: reviewId },
-    });
-
-    // Delete the actual review document
-    await Review.findByIdAndDelete(reviewId);
-
-    res.redirect(`/campgrounds/${campgroundId}`);
-  })
-);
-
-////////////// DISPLAY CAMPGROUNDS BY ID //////////////
-
-// GET: Display Campgrounds by ID
-app.get(
-  "/campgrounds/:id",
-  wrapAsync(async (req, res, next) => {
-    const { id } = req.params;
-    // Find the campground by ID and then populates with the reviews.
-    const campground = await Campground.findById(id).populate("reviews");
-
-    // Checks to see if we can locate a campground
-    if (!campground) {
-      throw new AppError("Can't Locate Product!!!", 404);
-    }
-
-    // Test that we can access reviews
-    console.log(`Testing reviews: ${campground.reviews}`); // Accessing populated reviews directly
-
-    res.render("campgrounds/view", { campground });
-  })
-);
+// Review Router
+app.use("/campgrounds/:id/reviews", reviews);
 
 //////////// ERROR HANDLING //////////////
 
@@ -254,14 +93,14 @@ app.all("*", (req, res, next) => {
 app.use(async (err, req, res, next) => {
   try {
     // Des the statusError and Message from error and provides a default error code and message
-    const { statusCode = 500, message = "Something went wrong" } = err;
+    const { statusCode = 500, message = "Something went wrong", stack } = err;
     // Joke for error pages
 
     const jokeData = await randomJoke();
     const joke = jokeData.joke; // Extract the joke from the API response
     console.log(joke); // Test purpose
 
-    res.status(statusCode).render("error-page", { statusCode, message, joke });
+    res.status(statusCode).render("error-page", { statusCode, message, joke, stack });
   } catch (e) {
     console.error(e);
     console.log("No dad joke available...");

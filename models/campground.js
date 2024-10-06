@@ -1,7 +1,6 @@
 // Configure out Schema
 
 const mongoose = require("mongoose");
-const { title } = require("process");
 const Schema = mongoose.Schema;
 const Review = require("./reviews");
 
