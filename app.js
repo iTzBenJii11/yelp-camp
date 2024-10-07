@@ -27,6 +27,26 @@ const campgrounds = require("./routes/campgrounds");
 // Import Reviews Routing
 const reviews = require("./routes/reviews");
 
+// Import session from express-session
+const session = require("express-session");
+
+// Configure session
+const sessionConfig = {
+  secret: "thisisnotagoodsecretkey",
+  resave: false,
+  cookie: {
+    httpOnly: true,
+    // Expires within a week (in milliseconds)
+    expires: Date.now() + 604800000,
+    // Max age of the cookie is a week (in milliseconds)
+    maxAge: 604800000,
+    saveUninitialized: false,
+  },
+};
+
+// Use the session with the configuration
+app.use(session(sessionConfig));
+
 ////////////// MIDDLEWARE //////////////
 // Allow the use for parsing
 app.use(express.urlencoded({ extended: true }));
