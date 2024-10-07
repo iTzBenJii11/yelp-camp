@@ -41,6 +41,9 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
 
+// Server our Static Assets
+app.use(express.static(path.join(__dirname, "public")));
+
 ////////////// DATABASE IMPLEMENTATION //////////////
 
 // Mongoose / MongoDB
@@ -97,10 +100,13 @@ app.use(async (err, req, res, next) => {
     // Joke for error pages
 
     const jokeData = await randomJoke();
-    const joke = jokeData.joke; // Extract the joke from the API response
+    const joke = jokeData.title; // Extract the joke from the API response
+    // Replace "Joke" with "Title"
     console.log(joke); // Test purpose
 
-    res.status(statusCode).render("error-page", { statusCode, message, joke, stack });
+    res
+      .status(statusCode)
+      .render("error-page", { statusCode, message, joke, stack });
   } catch (e) {
     console.error(e);
     console.log("No dad joke available...");
