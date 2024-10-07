@@ -1,31 +1,32 @@
-// Require Express
+////////////// Requiring Modules //////////////
+
+// Express
 const express = require("express");
 
-// Configures our router
-const router = express.Router({ mergeParams: true }); // Access to req.params
+// Router Configuration with Access to req.params
+const router = express.Router({ mergeParams: true });
 
-// Helper Function for error handling
+// Helper Function for Error Handling
 const wrapAsync = require("../errors/WarpAsync");
 
-// Global app error
+// Global App Error
 const AppError = require("../errors/AppError");
 
-////////////// DATABASE RELATED //////////////
+////////////// Database Related //////////////
 
-// Import Joi Schema for Reviews
+// Joi Schema for Review Validation
 const { reviewSchema } = require("../JoiSchema/validateReviews");
 
-// Require Review model schema
+// Review Model
 const Review = require("../models/reviews");
 
-// Import Campground Schema to create new Campgrounds
+// Campground Model
 const Campground = require("../models/campground");
 
-// Validate Reviews
+// Middleware to Validate Reviews
 const validateReview = (req, res, next) => {
   const { error } = reviewSchema.validate(req.body);
   if (error) {
-    // Map over the errors array
     const msg = error.details.map((el) => el.message).join(",");
     throw new AppError(msg, 400);
   } else {
@@ -33,55 +34,44 @@ const validateReview = (req, res, next) => {
   }
 };
 
-// POST: Create a review and add to campground
+////////////// Create Review //////////////
+
+// POST: Add New Review to Campground
 router.post(
   "/",
   validateReview,
   wrapAsync(async (req, res, next) => {
-    // Get id
-    const { id } = req.params;
+    const { id } = req.params; // Get Campground ID
+    const campground = await Campground.findById(id); // Find Campground by ID
 
-    // Find campground by id
-    const campground = await Campground.findById(id);
-    console.log(campground);
+    const review = new Review(req.body.review); // Create New Review
+    campground.reviews.push(review); // Add Review to Campground
 
-    // Saves the body of the review
-    const review = new Review(req.body.review);
-    console.log(review);
+    await review.save(); // Save Review to DB
+    await campground.save(); // Save Updated Campground
 
-    // Add review to campground array
-    campground.reviews.push(review);
-
-    // Saves review and campground
-    await review.save();
-    await campground.save();
-
-    // Redirect to the campground
-    res.redirect(`/campgrounds/${campground._id}`);
+    res.redirect(`/campgrounds/${campground._id}`); // Redirect to Campground Page
   })
 );
 
-////////////// DELETE REVIEW BY ID //////////////
+////////////// Delete Review //////////////
 
-// Delete Review of a Campground
+// DELETE: Remove Review from Campground
 router.delete(
   "/:reviewId",
   wrapAsync(async (req, res) => {
     const { id, reviewId } = req.params;
 
-    console.log(id);
-    console.log(reviewId);
+    // Remove the review from the campground's review array
+    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
 
-    // Deletes reviews from when campgrounds are deleted
-    await Campground.findByIdAndUpdate(id, {
-      $pull: { reviews: reviewId },
-    });
-
-    // Deletes the review itself
+    // Delete the review itself
     await Review.findByIdAndDelete(reviewId);
 
-    res.redirect(`/campgrounds/${id}`);
+    res.redirect(`/campgrounds/${id}`); // Redirect to Campground Page
   })
 );
+
+////////////// Export Router //////////////
 
 module.exports = router;

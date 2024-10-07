@@ -1,28 +1,29 @@
-// Require Express
+////////////// Requiring Modules //////////////
+
+// Express
 const express = require("express");
 
-// Configures our router
+// Router Configuration
 const router = express.Router({ mergeParams: true });
 
-// Helper Function for error handling
+// Helper Function for Error Handling
 const wrapAsync = require("../errors/WarpAsync");
 
-// Global app error
+// Global App Error
 const AppError = require("../errors/AppError");
 
-////////////// DATABASE RELATED //////////////
+////////////// Database Related //////////////
 
-// Import Joi Schema for Campground
+// Joi Schema for Campground Validation
 const { campgroundSchema } = require("../JoiSchema/validateCampground");
 
-// Import Campground Schema to create new Campgrounds
+// Campground Model
 const Campground = require("../models/campground");
 
-// Validate Campgrounds
+// Middleware to Validate Campgrounds
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
   if (error) {
-    // Map over the errors array
     const msg = error.details.map((el) => el.message).join(",");
     throw new AppError(msg, 400);
   } else {
@@ -30,43 +31,42 @@ const validateCampground = (req, res, next) => {
   }
 };
 
-////////////// DISPLAYS CAMPGROUNDS //////////////
+////////////// Display Campgrounds //////////////
 
-// GET: Display all Campgrounds
+// GET: Display All Campgrounds
 router.get(
   "/",
   wrapAsync(async (req, res, next) => {
-    // Fetch all campgrounds from database
     const campgrounds = await Campground.find({});
-    // Throw error if no campgrounds are found
     if (campgrounds.length === 0) {
-      throw new routerError("No campgrounds found", 404);
+      throw new AppError("No campgrounds found", 404);
     }
-    // Render all campgrounds index page
     res.render("campgrounds/index", { campgrounds });
   })
 );
 
-////////////// CREATE CAMPGROUND AND ADD TO DATABASE //////////////
+////////////// Create Campground //////////////
 
-// GET: Create Campground
+// GET: Form to Create New Campground
 router.get("/create", (req, res) => {
   res.render("campgrounds/create");
 });
 
-// POST: Created Campground Added To DB
+// POST: Add New Campground to Database
 router.post(
   "/",
   validateCampground,
   wrapAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
+    req.flash("success", "Successfully made a new campground");
     res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 
-////////////// UPDATE EXISTING CAMPGROUND //////////////
+////////////// Update Existing Campground //////////////
 
+// GET: Form to Edit Campground
 router.get(
   "/:id/edit",
   wrapAsync(async (req, res, next) => {
@@ -76,6 +76,7 @@ router.get(
   })
 );
 
+// PUT: Update Campground in Database
 router.put(
   "/:id",
   validateCampground,
@@ -89,9 +90,9 @@ router.put(
   })
 );
 
-////////////// DELETE CAMPGROUND BY ID //////////////
+////////////// Delete Campground //////////////
 
-// Delete campground by ID
+// DELETE: Remove Campground from Database
 router.delete(
   "/:id",
   wrapAsync(async (req, res, next) => {
@@ -101,26 +102,26 @@ router.delete(
   })
 );
 
-////////////// DISPLAY CAMPGROUNDS BY ID //////////////
+////////////// Display Campground by ID //////////////
 
-// GET: Display Campgrounds by ID
+// GET: Display Campground by ID with Reviews
 router.get(
   "/:id",
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
-    // Find the campground by ID and then populates with the reviews.
     const campground = await Campground.findById(id).populate("reviews");
 
-    // Checks to see if we can locate a campground
     if (!campground) {
       throw new AppError("Can't Locate Product!!!", 404);
     }
 
     // Test that we can access reviews
-    console.log(`Testing reviews: ${campground.reviews}`); // Accessing populated reviews directly
+    console.log(`Testing reviews: ${campground.reviews}`);
 
     res.render("campgrounds/view", { campground });
   })
 );
+
+////////////// Export Router //////////////
 
 module.exports = router;

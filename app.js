@@ -1,75 +1,82 @@
 ////////////// Requiring //////////////
 
-// Express
+// Core Modules
 const express = require("express");
-const app = express();
-
-// Random Joke
-const { randomJoke } = require("./randomJoke");
-
-// EJS
-app.set("view engine", "ejs");
-
-// Path
 const path = require("path");
-app.set("views", path.join(__dirname, "/views"));
 
-// EJS-MATE
+// External Middleware
+const flash = require("connect-flash");
+const session = require("express-session");
+const methodOverride = require("method-override");
+const morgan = require("morgan");
+
+// Template Engine
 const ejsEngine = require("ejs-mate");
-app.engine("ejs", ejsEngine);
 
-// Global app error
+// Custom Modules
+const { randomJoke } = require("./randomJoke");
 const AppError = require("./errors/AppError");
 
-// Import Campgrounds Routing
+// Routing Modules
 const campgrounds = require("./routes/campgrounds");
-
-// Import Reviews Routing
 const reviews = require("./routes/reviews");
 
-// Import session from express-session
-const session = require("express-session");
+////////////// App Configuration //////////////
 
-// Configure session
+// Initialize Express
+const app = express();
+
+// EJS Setup
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/views"));
+app.engine("ejs", ejsEngine);
+
+// Static Assets
+app.use(express.static(path.join(__dirname, "public")));
+
+// Express Middleware
+app.use(express.urlencoded({ extended: true }));
+
+// Method Override
+app.use(methodOverride("_method"));
+
+// Logging Middleware (Morgan)
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms")
+);
+
+////////////// Session and Flash //////////////
+
+// Session Configuration
 const sessionConfig = {
   secret: "thisisnotagoodsecretkey",
   resave: false,
+  saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    // Expires within a week (in milliseconds)
-    expires: Date.now() + 604800000,
-    // Max age of the cookie is a week (in milliseconds)
-    maxAge: 604800000,
-    saveUninitialized: false,
+    expires: Date.now() + 604800000, // Expires within a week (in milliseconds)
+    maxAge: 604800000, // Max age of the cookie is a week (in milliseconds)
   },
 };
 
 // Use the session with the configuration
 app.use(session(sessionConfig));
 
-////////////// MIDDLEWARE //////////////
-// Allow the use for parsing
-app.use(express.urlencoded({ extended: true }));
+// Flash Messages
+app.use(flash());
 
-// Allow the use of method override
-const methodOverride = require("method-override");
-app.use(methodOverride("_method")); // Tells all routes to use the middleware
+// Middleware to Pass Flash Messages to All Routes
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  next();
+});
 
-// Morgan Middleware (logs information about the incoming request)
-const morgan = require("morgan");
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms")
-);
-
-// Server our Static Assets
-app.use(express.static(path.join(__dirname, "public")));
-
-////////////// DATABASE IMPLEMENTATION //////////////
+////////////// Database Implementation //////////////
 
 // Mongoose / MongoDB
 const mongoose = require("mongoose");
 
-// Connect DB
+// Connect to MongoDB
 mongoose
   .connect("mongodb://127.0.0.1:27017/yelp-camp")
   .then(() => console.log("Connected!"))
@@ -78,23 +85,9 @@ mongoose
     console.log("AN ERROR HAS OCCURRED");
   });
 
-////////////// SECRET PAGE //////////////
-const secretPage = (req, res, next) => {
-  const { password } = req.query;
-  if (password === "431212") {
-    next();
-  } else {
-    res.send("YOU DON'T HAVE ACCESS TO THIS PAGE");
-  }
-};
-
-app.get("/secret", secretPage, (req, res) => {
-  res.send("HELLO AND WELCOME TO THIS SECRET PAGE");
-});
-
 ////////////// Routing //////////////
 
-// GET: Home Page
+// Home Page Route
 app.get("/", (req, res) => {
   res.render("home");
 });
@@ -102,26 +95,25 @@ app.get("/", (req, res) => {
 // Campgrounds Router
 app.use("/campgrounds", campgrounds);
 
-// Review Router
+// Reviews Router
 app.use("/campgrounds/:id/reviews", reviews);
 
-//////////// ERROR HANDLING //////////////
+////////////// Error Handling //////////////
 
-// Handles errors for pages/routes which are not valid
+// Handle Invalid Routes
 app.all("*", (req, res, next) => {
   next(new AppError("Page Not Found!", 404));
 });
 
-// Handles errors which we've not defined and response with a dad joke and error page.
+// Custom Error Handler with Random Joke
 app.use(async (err, req, res, next) => {
   try {
-    // Des the statusError and Message from error and provides a default error code and message
     const { statusCode = 500, message = "Something went wrong", stack } = err;
-    // Joke for error pages
 
+    // Get a random joke
     const jokeData = await randomJoke();
     const joke = jokeData.title; // Extract the joke from the API response
-    // Replace "Joke" with "Title"
+
     console.log(joke); // Test purpose
 
     res
@@ -133,9 +125,9 @@ app.use(async (err, req, res, next) => {
   }
 });
 
-////////////// START EXPRESS SERVER //////////////
+////////////// Start Express Server //////////////
 
-// Starting express
-app.listen(3030, (req, res) => {
+// Start Server
+app.listen(3030, () => {
   console.log("CONNECTING TO SERVER");
 });
