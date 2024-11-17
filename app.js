@@ -20,6 +20,7 @@ const AppError = require("./errors/AppError");
 // Routing Modules
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
+const users = require("./routes/users");
 
 ////////////// App Configuration //////////////
 
@@ -44,6 +45,10 @@ app.use(methodOverride("_method"));
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
+
+// Requiring passport / local passport
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
 ////////////// Session and Flash //////////////
 
@@ -85,6 +90,24 @@ mongoose
     console.log("AN ERROR HAS OCCURRED");
   });
 
+////////////// Passport //////////////
+
+// User model
+const User = require("./models/user");
+
+//Initialise Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Tells passport to use Local Strategy
+passport.use(new LocalStrategy(User.authenticate()));
+
+// How to serialize user
+passport.serializeUser(User.serializeUser());
+
+// How to deserialize user
+passport.deserializeUser(User.deserializeUser());
+
 ////////////// Routing //////////////
 
 // Home Page Route
@@ -97,6 +120,9 @@ app.use("/campgrounds", campgrounds);
 
 // Reviews Router
 app.use("/campgrounds/:id/reviews", reviews);
+
+// Users Router
+app.use("/", users);
 
 ////////////// Error Handling //////////////
 
@@ -112,7 +138,7 @@ app.use(async (err, req, res, next) => {
 
     // Get a random joke
     const jokeData = await randomJoke();
-    const joke = jokeData.title; // Extract the joke from the API response
+    const joke = jokeData.joke; // Extract the joke from the API response
 
     console.log(joke); // Test purpose
 

@@ -1,7 +1,7 @@
 // Random joke API
 module.exports.randomJoke = async () => {
   try {
-    let res = await fetch(`https://jsonplaceholder.typicode.com/todos/1`, {
+    let res = await fetch(`https://icanhazdadjoke.com/`, {
       // Removed the dad joke and replaced with fake API whilst developing at work.
       // https://icanhazdadjoke.com
 
