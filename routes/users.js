@@ -12,6 +12,8 @@ const User = require("../models/user");
 // Helper Function for Error Handling
 const wrapAsync = require("../errors/WarpAsync");
 
+////////////// REGISTER //////////////
+
 // GET: Register User form
 router.get("/register", (req, res) => {
   res.render("users/register");
@@ -42,7 +44,6 @@ router.post(
       // Redirects user to campgrounds
       res.redirect("/campgrounds");
     } catch (e) {
-
       // Error/Testing
       console.log(e.message);
 
@@ -54,5 +55,17 @@ router.post(
     }
   })
 );
+
+////////////// LOGIN //////////////
+
+// GET: Login Page
+router.get("/login", (req, res) => {
+  res.render('users/login')
+});
+
+// POST: Login User
+router.post("/login", (req, res) => {
+  res.send("user has been logged in");
+});
 
 module.exports = router;
