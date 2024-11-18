@@ -1,6 +1,9 @@
 <% layout('layouts/boilerplate') -%>
 <h1>Login into your account</h1>
 
+<!-- Include out alert partial -->
+<%- include('../partials/alert') %>
+
 <form
   class="mb-3"
   class="needs-validation"
@@ -13,7 +16,7 @@
     <input
       type="text"
       class="form-control"
-      name="user[username]"
+      name="username"
       ,
       id="username"
       required
@@ -26,7 +29,7 @@
       <input
         type="password"
         class="form-control"
-        name="user[password]"
+        name="password"
         id="password"
         required
       />

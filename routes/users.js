@@ -12,20 +12,8 @@ const User = require("../models/user");
 // Helper Function for Error Handling
 const wrapAsync = require("../errors/WarpAsync");
 
-////////////// LOGIN //////////////
-
-// GET: Login Page
-router.get("/login", (req, res) => {
-  res.render("users/login");
-});
-
-// POST: Login User
-router.post("/login", (req, res) => {
-  const { username, password } = req.body.user;
-  console.log(username);
-  console.log(password);
-  res.send(`${username} ${password}`);
-});
+// Require Passport
+const passport = require("passport");
 
 ////////////// REGISTER //////////////
 
@@ -69,6 +57,26 @@ router.post(
       res.redirect("/register");
     }
   })
+);
+
+////////////// LOGIN //////////////
+
+// GET: Login Page
+router.get("/login", (req, res) => {
+  res.render("users/login");
+});
+
+// POST: Login User
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    failureFlash: true,
+    failureRedirect: "/login",
+  }),
+  (req, res) => {
+    req.flash("success", "welcome back");
+    res.redirect("/campgrounds");
+  }
 );
 
 module.exports = router;
