@@ -12,6 +12,21 @@ const User = require("../models/user");
 // Helper Function for Error Handling
 const wrapAsync = require("../errors/WarpAsync");
 
+////////////// LOGIN //////////////
+
+// GET: Login Page
+router.get("/login", (req, res) => {
+  res.render("users/login");
+});
+
+// POST: Login User
+router.post("/login", (req, res) => {
+  const { username, password } = req.body.user;
+  console.log(username);
+  console.log(password);
+  res.send(`${username} ${password}`);
+});
+
 ////////////// REGISTER //////////////
 
 // GET: Register User form
@@ -55,17 +70,5 @@ router.post(
     }
   })
 );
-
-////////////// LOGIN //////////////
-
-// GET: Login Page
-router.get("/login", (req, res) => {
-  res.render('users/login')
-});
-
-// POST: Login User
-router.post("/login", (req, res) => {
-  res.send("user has been logged in");
-});
 
 module.exports = router;

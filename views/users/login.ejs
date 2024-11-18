@@ -1,6 +1,38 @@
 <% layout('layouts/boilerplate') -%>
-
-<!-- Include out alert partial -->
-<%- include('../partials/alert') %>
-
 <h1>Login into your account</h1>
+
+<form
+  class="mb-3"
+  class="needs-validation"
+  novalidate
+  action="/login"
+  method="POST"
+>
+  <div class="mb-3">
+    <label for="username" class="form-label"> Enter Username</label>
+    <input
+      type="text"
+      class="form-control"
+      name="user[username]"
+      ,
+      id="username"
+      required
+    />
+
+    <div class="valid-feedback">Looks Good!</div>
+    <div class="invalid-feedback">Enter Username</div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Enter Password</label>
+      <input
+        type="password"
+        class="form-control"
+        name="user[password]"
+        id="password"
+        required
+      />
+      <div class="valid-feedback">Looks Good</div>
+      <div class="invalid-feedback">Enter Password</div>
+    </div>
+    <button class="btn btn-success">Login</button>
+  </div>
+</form>
