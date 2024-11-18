@@ -47,7 +47,7 @@ router.post(
       console.log(e.message);
 
       // Flash the error message to the user
-      req.flash("error", e.message);
+      req.flash("success", e.message);
 
       // Redirect to the register page
       res.redirect("/register");
