@@ -47,12 +47,13 @@ router.post(
       // Redirects user to campgrounds
       res.redirect("/campgrounds");
     } catch (e) {
-      // Error/Testing
-      console.log(e.message);
-
-      // Flash the error message to the user
-      req.flash("success", e.message);
-
+      // Checks to see if a username is already taken (11000 is duplicate username)
+      if (e.code === 11000) {
+        req.flash("success", "The username is already taken");
+      } else {
+        // Flash the error message to the user
+        req.flash("success", e.message);
+      }
       // Redirect to the register page
       res.redirect("/register");
     }
@@ -70,11 +71,15 @@ router.get("/login", (req, res) => {
 router.post(
   "/login",
   passport.authenticate("local", {
-    failureFlash: true,
+    failureMessage: true,
     failureRedirect: "/login",
   }),
   (req, res) => {
-    req.flash("success", "welcome back");
+    // Grabs username
+    const { username } = req.body;
+
+    // Flash the user with welcome message
+    req.flash("success", `Welcome Back: ${username}`);
     res.redirect("/campgrounds");
   }
 );
