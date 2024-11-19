@@ -25,7 +25,7 @@ router.get("/register", (req, res) => {
 // POST: Register User
 router.post(
   "/register",
-  wrapAsync(async (req, res) => {
+  wrapAsync(async (req, res, next) => {
     try {
       const { email, username, password } = req.body.user;
       console.log(
@@ -38,14 +38,18 @@ router.post(
       // Registers / adds user to users collection
       const newUser = await User.register(user, password);
 
-      // Testing
-      console.log(newUser);
+      // Logs te user in, requires a callback func
+      req.login(newUser, (err) => {
+        if (err) {
+          next();
+        }
+        // Flash the user has registered
+        req.flash("success", "Welcome to Yelp Camp");
 
-      // Flash the user has registered
-      req.flash("success", "Welcome to Yelp Camp");
+        // Redirects user to campgrounds
+        res.redirect("/campgrounds");
+      });
 
-      // Redirects user to campgrounds
-      res.redirect("/campgrounds");
     } catch (e) {
       // Checks to see if a username is already taken (11000 is duplicate username)
       if (e.code === 11000) {
@@ -72,7 +76,7 @@ router.post(
   "/login",
   passport.authenticate("local", {
     failureMessage: true,
-    failureRedirect: "/login",
+    failureRedirect: "/login", // Redirects to /login after failure
   }),
   (req, res) => {
     // Grabs username
