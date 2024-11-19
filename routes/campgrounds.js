@@ -12,6 +12,10 @@ const wrapAsync = require("../errors/WarpAsync");
 // Global App Error
 const AppError = require("../errors/AppError");
 
+// isLoggedIn Middleware
+
+const { isLoggedIn, isLoggedInTest } = require("../middleware");
+
 ////////////// Database Related //////////////
 
 // Joi Schema for Campground Validation
@@ -36,6 +40,7 @@ const validateCampground = (req, res, next) => {
 // GET: Display All Campgrounds
 router.get(
   "/",
+  isLoggedInTest,
   wrapAsync(async (req, res, next) => {
     const campgrounds = await Campground.find({});
     if (campgrounds.length === 0) {
@@ -48,7 +53,7 @@ router.get(
 ////////////// Create Campground //////////////
 
 // GET: Form to Create New Campground
-router.get("/create", (req, res) => {
+router.get("/create", isLoggedIn, (req, res) => {
   res.render("campgrounds/create");
 });
 

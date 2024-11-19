@@ -77,11 +77,28 @@ router.post(
   (req, res) => {
     // Grabs username
     const { username } = req.body;
-
     // Flash the user with welcome message
     req.flash("success", `Welcome Back: ${username}`);
     res.redirect("/campgrounds");
   }
 );
+
+////////////// Logout //////////////
+
+// GET: Logout Page
+router.get("/logout", (req, res, next) => {
+  res.render("users/logout");
+});
+
+// POST: Logout request
+router.post("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    req.flash("success", "Goodbye!");
+    res.redirect("/campgrounds");
+  });
+});
 
 module.exports = router;

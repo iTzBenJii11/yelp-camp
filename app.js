@@ -70,26 +70,6 @@ app.use(session(sessionConfig));
 // Flash Messages
 app.use(flash());
 
-// Middleware to Pass Flash Messages to All Routes
-app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  next();
-});
-
-////////////// Database Implementation //////////////
-
-// Mongoose / MongoDB
-const mongoose = require("mongoose");
-
-// Connect to MongoDB
-mongoose
-  .connect("mongodb://127.0.0.1:27017/yelp-camp")
-  .then(() => console.log("Connected!"))
-  .catch((e) => {
-    console.error(e);
-    console.log("AN ERROR HAS OCCURRED");
-  });
-
 ////////////// Passport //////////////
 
 // User model
@@ -107,6 +87,31 @@ passport.serializeUser(User.serializeUser());
 
 // How to deserialize user
 passport.deserializeUser(User.deserializeUser());
+
+
+////////////// Middleware //////////////
+
+// Middleware to Pass Flash Messages to All Routes
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user; // Pass current user to all templates
+  res.locals.error = req.flash("error"); // Pass error flash messages
+  res.locals.success = req.flash("success"); // Pass success flash messages
+  next(); // Move to the next middleware/route handler
+});
+
+////////////// Database Implementation //////////////
+
+// Mongoose / MongoDB
+const mongoose = require("mongoose");
+
+// Connect to MongoDB
+mongoose
+  .connect("mongodb://127.0.0.1:27017/yelp-camp")
+  .then(() => console.log("Connected!"))
+  .catch((e) => {
+    console.error(e);
+    console.log("AN ERROR HAS OCCURRED");
+  });
 
 ////////////// Routing //////////////
 
@@ -137,7 +142,7 @@ app.use(async (err, req, res, next) => {
     const { statusCode = 500, message = "Something went wrong", stack } = err;
 
     // Get a random joke
-    // const jokeData = await randomJoke();
+    const jokeData = await randomJoke(); // Uncomment this line to use the API
     const joke = jokeData.joke; // Extract the joke from the API response
 
     console.log(joke); // Test purpose
