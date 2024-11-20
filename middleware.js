@@ -2,16 +2,18 @@
 module.exports.isLoggedIn = (req, res, next) => {
   // Is the user Authenticated?
   if (!req.isAuthenticated()) {
+    // Returns uses to the original URL they were previously on before sign in
+    req.session.returnTo = req.originalUrl;
     req.flash("success", "You must be logged in");
     return res.redirect("/login");
   }
   next();
 };
 
-// Test to see if req.user is working.
-module.exports.isLoggedInTest = (req, res, next) => {
-  // Gets the user obj
-  const currentUserTest = req.user;
-  console.log(currentUserTest);
+// Middleware to store the returnTo within the session
+module.exports.storeReturnTo = (req, res, next) => {
+  if (req.session.returnTo) {
+    res.locals.returnTo = req.session.returnTo;
+  }
   next();
 };

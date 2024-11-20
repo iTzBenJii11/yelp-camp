@@ -14,7 +14,7 @@ const AppError = require("../errors/AppError");
 
 // isLoggedIn Middleware
 
-const { isLoggedIn, isLoggedInTest } = require("../middleware");
+const { isLoggedIn } = require("../middleware");
 
 ////////////// Database Related //////////////
 
@@ -40,7 +40,6 @@ const validateCampground = (req, res, next) => {
 // GET: Display All Campgrounds
 router.get(
   "/",
-  isLoggedInTest,
   wrapAsync(async (req, res, next) => {
     const campgrounds = await Campground.find({});
     if (campgrounds.length === 0) {
@@ -60,6 +59,7 @@ router.get("/create", isLoggedIn, (req, res) => {
 // POST: Add New Campground to Database
 router.post(
   "/",
+  isLoggedIn,
   validateCampground,
   wrapAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
@@ -74,6 +74,7 @@ router.post(
 // GET: Form to Edit Campground
 router.get(
   "/:id/edit",
+  isLoggedIn,
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
@@ -85,6 +86,7 @@ router.get(
 router.put(
   "/:id",
   validateCampground,
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(
@@ -100,6 +102,7 @@ router.put(
 // DELETE: Remove Campground from Database
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);

@@ -15,6 +15,9 @@ const wrapAsync = require("../errors/WarpAsync");
 // Require Passport
 const passport = require("passport");
 
+// Require middleware which stores the returnTo within the session
+const { storeReturnTo } = require("../middleware");
+
 ////////////// REGISTER //////////////
 
 // GET: Register User form
@@ -49,7 +52,6 @@ router.post(
         // Redirects user to campgrounds
         res.redirect("/campgrounds");
       });
-
     } catch (e) {
       // Checks to see if a username is already taken (11000 is duplicate username)
       if (e.code === 11000) {
@@ -74,16 +76,23 @@ router.get("/login", (req, res) => {
 // POST: Login User
 router.post(
   "/login",
+  storeReturnTo,
   passport.authenticate("local", {
     failureMessage: true,
     failureRedirect: "/login", // Redirects to /login after failure
   }),
   (req, res) => {
+    // Redirects to campground
+    const redirectUrl = res.locals.returnTo || "/campgrounds";
+
+    // Delete returnTo from the session after login
+    delete req.session.returnTo;
+
     // Grabs username
     const { username } = req.body;
     // Flash the user with welcome message
     req.flash("success", `Welcome Back: ${username}`);
-    res.redirect("/campgrounds");
+    res.redirect(redirectUrl);
   }
 );
 

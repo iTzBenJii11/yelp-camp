@@ -12,6 +12,9 @@ const wrapAsync = require("../errors/WarpAsync");
 // Global App Error
 const AppError = require("../errors/AppError");
 
+// Middleware to protect routes, user has to be logged in
+const { isLoggedIn } = require("../middleware");
+
 ////////////// Database Related //////////////
 
 // Joi Schema for Review Validation
@@ -39,6 +42,7 @@ const validateReview = (req, res, next) => {
 // POST: Add New Review to Campground
 router.post(
   "/",
+  isLoggedIn,
   validateReview,
   wrapAsync(async (req, res, next) => {
     const { id } = req.params; // Get Campground ID
@@ -59,6 +63,7 @@ router.post(
 // DELETE: Remove Review from Campground
 router.delete(
   "/:reviewId",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id, reviewId } = req.params;
 
