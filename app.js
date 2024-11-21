@@ -142,7 +142,7 @@ app.use(async (err, req, res, next) => {
     const { statusCode = 500, message = "Something went wrong", stack } = err;
 
     // Get a random joke
-    const jokeData = await randomJoke(); // Uncomment this line to use the API
+    // const jokeData = await randomJoke(); // Uncomment this line to use the API
     const joke = jokeData.joke; // Extract the joke from the API response
 
     console.log(joke); // Test purpose
