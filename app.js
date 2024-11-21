@@ -1,5 +1,11 @@
 ////////////// Requiring //////////////
 
+// Require DOTENV
+require("dotenv").config();
+
+// Stores the database value
+const dbUrl = process.env.dbUrl;
+
 // Core Modules
 const express = require("express");
 const path = require("path");
@@ -88,7 +94,6 @@ passport.serializeUser(User.serializeUser());
 // How to deserialize user
 passport.deserializeUser(User.deserializeUser());
 
-
 ////////////// Middleware //////////////
 
 // Middleware to Pass Flash Messages to All Routes
@@ -146,12 +151,11 @@ app.use(async (err, req, res, next) => {
     const joke = jokeData.joke; // Extract the joke from the API response
 
     console.log(joke); // Test purpose
-
     res
       .status(statusCode)
       .render("error-page", { statusCode, message, joke, stack });
   } catch (e) {
-    console.error(e);
+    console.error(e.message);
     console.log("No dad joke available...");
   }
 });

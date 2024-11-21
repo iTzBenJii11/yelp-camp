@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "connect-flash": "^0.1.1",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "ejs-mate": "^4.0.0",
     "express": "^4.21.0",
@@ -17,6 +18,7 @@
     "flash": "^1.1.0",
     "joi": "^17.13.3",
     "method-override": "^3.0.0",
+    "mongodb": "^6.10.0",
     "mongoose": "^8.6.3",
     "morgan": "^1.10.0",
     "node": "^22.9.0",
