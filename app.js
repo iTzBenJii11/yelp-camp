@@ -4,7 +4,7 @@
 require("dotenv").config();
 
 // Stores the database value
-const dbUrl = process.env.dbUrl;
+const dbUrl = process.env.dbUrl || "mongodb://127.0.0.1:27017/yelp-camp";
 
 // Core Modules
 const express = require("express");
@@ -27,6 +27,20 @@ const AppError = require("./errors/AppError");
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
 const users = require("./routes/users");
+
+////////////// Mongo Session Configuration //////////////
+const MongoStore = require("connect-mongo");
+
+// Create the session store
+const store = MongoStore.create({
+  mongoUrl: dbUrl, // Use `mongoUrl` for database connection
+  touchAfter: 24 * 60 * 60, // Lazy session update (1 day in seconds)
+});
+
+// Handle errors
+store.on("error", (e) => {
+  console.log(e);
+});
 
 ////////////// App Configuration //////////////
 
@@ -60,6 +74,7 @@ const LocalStrategy = require("passport-local");
 
 // Session Configuration
 const sessionConfig = {
+  store, // Apply mongo session store to session config
   secret: "thisisnotagoodsecretkey",
   resave: false,
   saveUninitialized: false,
@@ -111,7 +126,7 @@ const mongoose = require("mongoose");
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://127.0.0.1:27017/yelp-camp")
+  .connect(dbUrl)
   .then(() => console.log("Connected!"))
   .catch((e) => {
     console.error(e);
