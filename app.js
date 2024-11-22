@@ -5,6 +5,7 @@ require("dotenv").config();
 
 // Stores the database value
 const dbUrl = process.env.dbUrl || "mongodb://127.0.0.1:27017/yelp-camp";
+console.log(process.env.dbUrl);
 
 // Core Modules
 const express = require("express");
@@ -127,7 +128,7 @@ const mongoose = require("mongoose");
 // Connect to MongoDB
 mongoose
   .connect(dbUrl)
-  .then(() => console.log("Connected!"))
+  .then(() => console.log(`You're connected to ${dbUrl}`)) // Maybe add condition to display as connected to local or cloud db
   .catch((e) => {
     console.error(e);
     console.log("AN ERROR HAS OCCURRED");
@@ -162,7 +163,7 @@ app.use(async (err, req, res, next) => {
     const { statusCode = 500, message = "Something went wrong", stack } = err;
 
     // Get a random joke
-    // const jokeData = await randomJoke(); // Uncomment this line to use the API
+    const jokeData = await randomJoke(); // Uncomment this line to use the API
     const joke = jokeData.joke; // Extract the joke from the API response
 
     console.log(joke); // Test purpose
