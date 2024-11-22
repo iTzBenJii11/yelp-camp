@@ -4,7 +4,7 @@
 require("dotenv").config();
 
 // Stores the database value
-const dbUrl = process.env.DB_URL 
+const dbUrl = process.env.DB_URL;
 console.log(process.env.DB_URL);
 
 // Core Modules
@@ -138,7 +138,8 @@ mongoose
 
 // Home Page Route
 app.get("/", (req, res) => {
-  res.render("home");
+  const pic = "/img/homepageimg.png";
+  res.render("home", { pic: pic });
 });
 
 // Campgrounds Router
